@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "some text" > hello.txt
-      - name: Upload artifact
+      - name: Upload artifact 123
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
