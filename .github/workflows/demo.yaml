@@ -15,6 +15,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "This is a test step"
+  
+  artifact:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: echo "some text" > hello.txt
+    uses: actions/upload-artifact@v3
+    with:
+      name: my-artifact
+      path: hello.txt
 
   integration:
     runs-on: ubuntu-20.04
