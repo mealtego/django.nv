@@ -34,7 +34,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: /
+          command: |
             echo "This is an artifact step"
             echo "hello" > hello.txt
       - store_artifacts:
