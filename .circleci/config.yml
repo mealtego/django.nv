@@ -23,14 +23,9 @@ jobs:
       - checkout
 
       - run: |
-<<<<<<< HEAD
-          echo  | docker login -u  --password-stdin
-          docker build -t /django.nv .   # Build the application into Docker image
-          docker push /django.nv         # Push the image into registry
-=======
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker build -t $DOCKER_USERNAME/django.nv .   # Build the application into Docker image
           docker push $DOCKER_USERNAME/django.nv         # Push the image into registry
->>>>>>> 44d3d66b54d7d79409fdb7cff564b5170dbc6e67
 
   integration:
     docker:
