@@ -54,4 +54,5 @@ workflows:
       - build
       - test
       - integration
+      - artifact
       - prod
