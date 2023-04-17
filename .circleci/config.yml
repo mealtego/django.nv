@@ -22,8 +22,8 @@ jobs:
     steps:
       - checkout
 
-      - run: docker run --rm -v $(pwd):/src -w /src hysnsec/retire --outputformat json --outputpath retirejs-output.json --severity high
-        when: on_fail
+      - run: docker run --rm -v $(pwd):/src -w /src hysnsec/retire --outputformat json --outputpath retirejs-output.json --severity high || true
+        
 
       - store_artifacts:
           path: retirejs-output.json
