@@ -17,19 +17,6 @@ jobs:
           pip install -r requirements.txt
           python manage.py test taskManager
 
-  oast-frontend:
-    machine: true
-    steps:
-      - checkout
-
-      - run:
-          command: docker run --rm -v $(pwd):/src -w /src hysnsec/retire --outputformat json --outputpath retirejs-output.json --severity high || true
-
-      - store_artifacts:
-          path: retirejs-output.json
-          destination: retirejs-artifact
-          when: always
-
   integration:
     docker:
       - image: python:3.6
@@ -39,7 +26,22 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
-          when: on_fail         # Even if the job fails, continue to the next stages
+
+  oast-snyk:
+    docker: 
+      - image: node:latest
+    steps:
+      - checkout
+      - run:
+          command: |
+            - wget -O snyk https://github.com/snyk/snyk/releases/download/v1.566.0/snyk-linux
+            - chmod +x snyk
+            - mv snyk /usr/local/bin/
+            - npm install
+            - snyk test --json > snyk-results.json || true 
+      - store_artifacts:
+          path: snyk-results.json
+          destination: snyk-file
 
   prod:
     docker:
@@ -55,13 +57,10 @@ workflows:
       - build
       - test:
           requires:
-            - build
-      - oast-frontend:
-          requires:
-            - test
+            - build 
       - integration:
           requires:
-            - oast-frontend
+            - test
       - prod:
           type: approval
           requires:
