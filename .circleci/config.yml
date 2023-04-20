@@ -25,7 +25,8 @@ jobs:
       - run:
           command: |
             echo "This is an integration step"
-            exit 1 || true 
+            exit 1
+          when: always 
 
   oast-snyk:
     docker: 
@@ -38,7 +39,8 @@ jobs:
             - chmod +x snyk
             - mv snyk /usr/local/bin/
             - npm install
-            - snyk test --json > snyk-results.json || true 
+            - snyk test --json > snyk-results.json 
+          when: always 
       - store_artifacts:
           path: snyk-results.json
           destination: snyk-file
