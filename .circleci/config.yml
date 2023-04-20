@@ -63,7 +63,10 @@ workflows:
       - integration:
           requires:
             - test
+      - oast-snyk:
+          requires:
+            - integration
       - prod:
           type: approval
           requires:
-            - integration
+            - oast-snyk
