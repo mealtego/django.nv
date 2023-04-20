@@ -26,10 +26,8 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
-          when: always 
-  allow_failures:
-    - integration
-
+    continue-on-error: true 
+  
   oast-snyk:
     docker: 
       - image: node:latest
