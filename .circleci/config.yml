@@ -35,12 +35,12 @@ jobs:
       - checkout
       - run:
           command: |
-            - wget -O snyk https://github.com/snyk/snyk/releases/download/v1.566.0/snyk-linux
-            - chmod +x snyk
-            - mv snyk /usr/local/bin/
-            - npm install
-            - snyk test --json > snyk-results.json 
-          when: always 
+            wget -O snyk https://github.com/snyk/snyk/releases/download/v1.566.0/snyk-linux
+            chmod +x snyk
+            mv snyk /usr/local/bin/
+            npm install
+            snyk test --json > snyk-results.json 
+          when: on_fail 
       - store_artifacts:
           path: snyk-results.json
           destination: snyk-file
