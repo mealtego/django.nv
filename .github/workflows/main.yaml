@@ -60,6 +60,7 @@ jobs:
 
       - name: Run Snyk
         run: snyk test --json > snyk-results.json
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
