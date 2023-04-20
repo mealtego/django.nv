@@ -40,7 +40,7 @@ jobs:
             chmod +x snyk
             mv snyk /usr/local/bin/
             npm install
-            snuk auth $SNYK_ENV
+            snyk auth $SNYK_ENV
             snyk test --json > snyk-results.json || true
           
       - store_artifacts:
