@@ -67,4 +67,4 @@ workflows:
       - prod:
           type: approval
           requires:
-            - oast-snyk
+            - secret_scanning
