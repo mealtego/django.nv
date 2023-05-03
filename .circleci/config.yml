@@ -38,10 +38,10 @@ jobs:
             docker pull hysnsec/bandit
             docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json || true
           when: on_fail 
-           
+
       - store_artifacts:
-          path: trufflehog-output.json
-          destination: TruffleHog
+          path: bandit-output.json
+          destination: bandit-output
           when: always 
 
   prod:
