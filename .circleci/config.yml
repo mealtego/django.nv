@@ -37,8 +37,7 @@ jobs:
           command: |
             docker pull hysnsec/bandit
             docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json || true
-          when: on_failure
-
+          
       - store_artifacts:
           path: bandit-output.json
           destination: bandit-output
