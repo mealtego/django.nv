@@ -28,15 +28,17 @@ jobs:
             exit 1
           when: on_fail 
    
-  secret_scanning:
+  sast:
     machine: true
     steps:
       - checkout
       
       - run:
           command: |
-            docker run --rm -v $(pwd):/src hysnsec/trufflehog file:///src --json > trufflehog-output.json || true
-          
+            docker pull hysnsec/bandit
+            docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json || true
+          when: on_fail 
+           
       - store_artifacts:
           path: trufflehog-output.json
           destination: TruffleHog
@@ -60,10 +62,10 @@ workflows:
       - integration:
           requires:
             - test
-      - secret_scanning:
+      - sast:
           requires:
             - integration
       - prod:
           type: approval
           requires:
-            - secret_scanning
+            - sast
