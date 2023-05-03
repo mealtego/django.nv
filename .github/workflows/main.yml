@@ -40,7 +40,7 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
-    needs: satt
+    needs: sast
     steps:
       - uses: actions/checkout@v2
 
