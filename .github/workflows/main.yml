@@ -30,13 +30,14 @@ jobs:
 
       - run: docker pull hysnsec/bandit
       - run: docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json
-
+        continue-on-error: true
+        
       - uses: actions/upload-artifact@v2
         with:
           name: bandit-output
           path: bandit-output.json
         if: always()                        # what is this for?
-        continue-on-error: true
+        
 
   test:
     runs-on: ubuntu-20.04
