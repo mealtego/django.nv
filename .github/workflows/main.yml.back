@@ -22,25 +22,10 @@ jobs:
           source env/bin/activate
           pip install -r requirements.txt
           python manage.py check
-  sast:
-    runs-on: ubuntu-20.04
-    needs: build
-    steps:
-      - uses: actions/checkout@v2
-
-      - run: docker pull hysnsec/bandit
-      - run: docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: bandit-output
-          path: bandit-output.json
-        if: always()                        # what is this for?
-        continue-on-error: true
 
   test:
     runs-on: ubuntu-20.04
-    needs: satt
+    needs: build
     steps:
       - uses: actions/checkout@v2
 
@@ -55,6 +40,21 @@ jobs:
           source env/bin/activate
           pip install -r requirements.txt
           python manage.py test taskManager
+
+  secret_scanning:
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: docker run --rm -v $(pwd):/src hysnsec/trufflehog file:///src --json > trufflehog-output.json
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TruffleHog
+          path: trufflehog-output.json
+        if: always()                        # what is this for?
+        continue-on-error: true
 
   integration:
     runs-on: ubuntu-20.04
