@@ -41,31 +41,23 @@ jobs:
           pip install -r requirements.txt
           python manage.py test taskManager
 
-  sonarqube:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      with:
-        projectBaseDir: .
-        args: >
-          -Dsonar.projectKey=Django
-
   integration:
     runs-on: ubuntu-20.04
     needs: test
     steps:
-      - run: echo "This is an integration step"
-      - run: exit 1
+      - uses: actions/checkout@v2
+
+      - run: docker pull owasp/zap2docker-stable:2.10.0
+      - run: docker run --user \$(id -u):\$(id -g) -w /zap -v \$(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable:2.10.0 zap-baseline.py -t https://prod-khbdop1h.lab.practical-devsecops.training -J zap-output.json
         continue-on-error: true
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bandit-output
+          path: bandit-output.json
+        if: always()    
+
+        
   prod:
     runs-on: ubuntu-20.04
     needs: integration
