@@ -45,10 +45,9 @@ jobs:
     runs-on: ubuntu-20.04
     needs: test
     steps:
-      - uses: actions/checkout@v2
-
-      - run: docker pull owasp/zap2docker-stable:2.10.0
-      - run: docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable:2.10.0 zap-baseline.py -t https://prod-khbdop1h.lab.practical-devsecops.training -J zap-output.json
+      - run: |
+          docker pull owasp/zap2docker-stable:2.10.0
+          docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable:2.10.0 zap-baseline.py -t https://prod-khbdop1h.lab.practical-devsecops.training -J zap-output.json 
         continue-on-error: true
 
       - uses: actions/upload-artifact@v2
