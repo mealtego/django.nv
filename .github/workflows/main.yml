@@ -52,8 +52,8 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: bandit-output
-          path: bandit-output.json
+          name: zap-output
+          path: zap-output.json 
         if: always()    
 
         
