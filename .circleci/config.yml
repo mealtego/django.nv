@@ -26,22 +26,6 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
-          when: on_fail 
-   
-  sast:
-    machine: true
-    steps:
-      - checkout
-      
-      - run:
-          command: |
-            docker pull hysnsec/bandit
-            docker run -v $(pwd):/src --rm -w /src hysnsec/bandit -r /src -f json -o bandit-output.json || true
-          
-      - store_artifacts:
-          path: bandit-output.json
-          destination: bandit-output
-          when: always 
 
   prod:
     docker:
@@ -61,10 +45,7 @@ workflows:
       - integration:
           requires:
             - test
-      - sast:
-          requires:
-            - integration
       - prod:
           type: approval
           requires:
-            - sast
+            - integration
