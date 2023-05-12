@@ -28,18 +28,18 @@ jobs:
             exit 1 
           when: on_fail
     
-  zap_baseline:
+  nuclei_dast:
     machine: true
     steps:
       - checkout
 
       - run: |
-          docker pull owasp/zap2docker-stable:2.10.0
-          docker run --user root --rm -v $(pwd):/zap/wrk:rw -w /zap owasp/zap2docker-stable:2.10.0 zap-baseline.py -t ${PROD_URL} -J zap-output.json || true
+          docker pull projectdiscovery/nuclei:v2.9.1
+          docker run --user $(id -u):$(id -g) -w /nuclei -v $(pwd):/nuclei:rw --rm projectdiscovery/nuclei:v2.9.1 -u https://prod-khbdop1h.lab.practical-devsecops.training -j -o nuclei-output.json || true
 
       - store_artifacts:
-          path: zap-output.json
-          destination: zap-artifact
+          path: nuclei-output.json
+          destination: nuclei-output
           
 
   prod:
@@ -60,10 +60,10 @@ workflows:
       - integration:
           requires:
             - test
-      - zap_baseline:
+      - nuclei_dast:
           requires:
             - integration
       - prod:
           type: approval
           requires:
-            - zap_baseline
+            - nuclei_dast
