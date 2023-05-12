@@ -58,7 +58,10 @@ workflows:
       - integration:
           requires:
             - test
+      - zap-baseline:
+          requires:
+            - integration
       - prod:
           type: approval
           requires:
-            - integration
+            - zap-baseline
