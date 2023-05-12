@@ -25,8 +25,20 @@ jobs:
       - run:
           command: |
             echo "This is an integration step"
-            exit 1 || true
+            exit 1 
+          when: always
     
+  zap-baseline:
+    machine: true
+    steps:
+      - run: 
+          command: docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable:2.10.0 zap-baseline.py -t https://prod-khbdop1h.lab.practical-devsecops.training -J zap-output.json || true
+          when: always
+
+      - store_artifacts:
+          path: zap-output.json
+          destination: zap-output
+          when: always
 
   prod:
     docker:
