@@ -32,11 +32,12 @@ jobs:
     machine: true
     steps:
       - checkout
+      
       - run: 
           command: |
             docker pull owasp/zap2docker-stable:2.10.0
             docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable:2.10.0 zap-baseline.py -t https://prod-khbdop1h.lab.practical-devsecops.training -J zap-output.json || true
-          when: on_fail
+          
 
       - store_artifacts:
           path: zap-output.json
