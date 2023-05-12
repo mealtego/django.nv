@@ -41,13 +41,13 @@ jobs:
           pip install -r requirements.txt
           python manage.py test taskManager
 
-  zap_baseline:
+  nuclei_dast:
     runs-on: ubuntu-20.04
     needs: test
     steps:
       - run: |
           docker pull projectdiscovery/nuclei:v2.9.1
-          docker run --user $(id -u):$(id -g) -w /nuclei -v $(pwd):/nuclei:rw --rm projectdiscovery/nuclei:v2.9.1 -u ${{ secrets.PROD_URL }} -j -o nuclei-output.json 
+          docker run --user $(id -u):$(id -g) -w /nuclei -v $(pwd):/nuclei:rw --rm projectdiscovery/nuclei:v2.9.1 -u https://prod-kbesuu8i.lab.practical-devsecops.training -j -o nuclei-output.json 
         continue-on-error: true
       - uses: actions/upload-artifact@v2
         with:
