@@ -51,7 +51,7 @@ jobs:
 
       - uses: returntocorp/semgrep-action@v1
         with:
-          config: >- # more at semgrep.dev/explore
+          config: >- # more at semgrep.dev/explore!
             p/security-audit
             p/secrets
             p/django
