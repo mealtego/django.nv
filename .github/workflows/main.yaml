@@ -55,7 +55,7 @@ jobs:
             p/security-audit
             p/secrets
             p/django
-      continue-on-error: true
+    continue-on-error: true
 
   integration:
     runs-on: ubuntu-20.04
