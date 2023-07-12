@@ -4,7 +4,7 @@ jobs:
       - image: python:3.6                   # similar to "image" in GitLab
     steps:
       - checkout
-      - run: |                              # similar to "script" in GitLabx
+      - run: |                              # similar to "script" in GitLab
           pip install -r requirements.txt
           python manage.py check
 
@@ -25,21 +25,7 @@ jobs:
       - run:
           command: |
             echo "This is an integration step"
-            exit 1 
-          when: on_fail
-    
-  nuclei_dast:
-    machine: true
-    steps:
-      - checkout
-
-      - run: |
-          docker run --user $(id -u):$(id -g) -w /nuclei -v $(pwd):/nuclei:rw --rm projectdiscovery/nuclei -u https://prod-kbesuu8i.lab.practical-devsecops.training -j -o nuclei-output.json || true
-
-      - store_artifacts:
-          path: nuclei-output.json
-          destination: nuclei-artifact
-          
+            exit 1
 
   prod:
     docker:
@@ -59,10 +45,7 @@ workflows:
       - integration:
           requires:
             - test
-      - nuclei_dast:
-          requires:
-            - integration
       - prod:
           type: approval
           requires:
-            - nuclei_dast
+            - integration
