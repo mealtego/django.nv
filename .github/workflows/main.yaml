@@ -62,16 +62,17 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'django.nv:${{ github.sha }}'
-          format: 'json'
+          format: 'sarif'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'MEDIUM'
+          output: 'trivy-results.sarif'
         continue-on-error: true
 
   integration:
     runs-on: ubuntu-20.04
-    needs: tescontainer_scanningt
+    needs: container_scanning
     steps:
       - run: echo "This is an integration step"
       - run: exit 1
