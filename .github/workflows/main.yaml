@@ -1,7 +1,7 @@
 name: Django                                  # workflow name
 
 on:
-  push:                                       
+  push:
     branches:                                 # similar to "only" in GitLab
       - main
 
@@ -40,39 +40,31 @@ jobs:
           source env/bin/activate
           pip install -r requirements.txt
           python manage.py test taskManager
-  
+
   container_scanning:
     runs-on: ubuntu-20.04
     needs: test
     steps:
-      - name: Checkout code                  # This step checks out the source code repository so that the subsequent steps can access the code.
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx           # This step sets up Docker Buildx, which is an extension to Docker that provides enhanced capabilities for building and pushing Docker images. The action used here is "docker/setup-buildx-action@v1.
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: build local container           # This is the main step responsible for building the Docker image of the Django application
-        uses: docker/build-push-action@v2     # This action is used to build and push Docker images. In this case, version 2 of the action is used.
-        with:                                 # This section contains the input parameters for the "docker/build-push-action" action.
-          tags: django.nv:${{ github.sha }}   # This specifies the tags to be associated with the Docker image. In this case, the tag includes "django.nv" followed by the commit SHA (github.sha) of the code being built. The commit SHA is a unique identifier for the specific commit in the Git repository, allowing for version tracking of the Docker image.
-          push: false                         # This indicates that the Docker image should not be pushed to any container registry. Instead, it will be kept locally.
-          load: true                          # This option tells Docker to load the image into the local Docker daemon after building it. This means that the image will be available for use on the current system without the need for a registry.
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+      - name: build local container
+        uses: docker/build-push-action@v2
         with:
-          image-ref: 'django.nv:${{ github.sha }}'
-          format: 'sarif'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'MEDIUM'
-          output: 'trivy-results.sarif'
-        continue-on-error: true
+          tags: django.nv:latest
+          push: false
+          load: true
+
+      - name: Scan image
+        uses: anchore/scan-action@v2
+        with:
+          image: "django.nv:latest"
+          fail-build: true          # fail a build when issues found
+        continue-on-error: true             # allow the build to fail, similar to "allow_failure: true" in GitLab
 
   integration:
     runs-on: ubuntu-20.04
-    needs: container_scanning
+    needs: oast-frontend
     steps:
       - run: echo "This is an integration step"
       - run: exit 1
